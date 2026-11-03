@@ -10,6 +10,8 @@ typedef enum {
     SPECIAL_CHARACTER,
     CONSTANT,
     IDENTIFIER,
+    STRING_LITERAL,
+    CHAR_LITERAL,
     UNKNOWN
 } TokenType;
 
