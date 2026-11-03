@@ -5,9 +5,10 @@ int main(int argc, char *argv[]) {
     initializeLexer(argv[1]);
 
     Token token;
+    
     while ((token = getNextToken()).type != UNKNOWN) 
     {
-        printf("Token: %s, Type: %d\n", token.lexeme, token.type);
+        printf("Token: %-35s Type: %s\n", token.lexeme, Token_Type(token.type));
     }
 
     return 0;

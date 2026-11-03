@@ -22,11 +22,13 @@ typedef struct {
 
 void initializeLexer(const char* filename);
 Token getNextToken();
+char *Token_Type(TokenType type);
 void categorizeToken(Token* token);
 int isKeyword(const char* str);
 int isOperator(const char* str);
 int isSpecialCharacter(char ch);
 int isConstant(const char* str);
+int isfloatConstant(const char *str);
 int isIdentifier(const char* str);
 
 #endif
