@@ -25,6 +25,7 @@ void initializeLexer(const char* filename)
     printf("File is opened successfully\n");
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 char *Token_Type(TokenType type)
 {
     switch(type)
@@ -50,12 +51,13 @@ char *Token_Type(TokenType type)
     }
 }
 
-
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 Token getNextToken()
 {
     int i = 0;
     char ch;
     int next;
+
     Token token;
     token.lexeme[0] = '\0';
     token.type = UNKNOWN;
@@ -71,14 +73,12 @@ Token getNextToken()
 
     if(ch == EOF)
         return token;
-    
 
     //Preprocessor directive
     if(ch == '#')
     {
         while((ch = fgetc(fptr)) != '\n' && ch != EOF)  {}
-        //if(ch == '\n')
-            return getNextToken();
+        return getNextToken();
     }
     //Keyword or identifier
     if(isalpha(ch) || ch == '_')
@@ -90,13 +90,15 @@ Token getNextToken()
             
             token.lexeme[i++] = ch;
             ch = fgetc(fptr);
-        } while (isalnum(ch) || ch == '_');
+        } while(isalnum(ch) || ch == '_');
+
         token.lexeme[i] = '\0';
 
         if(ch != EOF)
         {
             ungetc(ch, fptr);
         }
+
         token.lexeme[i] = '\0';
         categorizeToken(&token);
         return token;
@@ -132,12 +134,14 @@ Token getNextToken()
         {
             ungetc(ch, fptr);
         }
+
         token.lexeme[i] = '\0';
 
         if(isConstant(token.lexeme) || isfloatConstant(token.lexeme))
         {
             token.type = CONSTANT;
         }
+
         return token;
     }
     //Comment and division operator
@@ -148,7 +152,6 @@ Token getNextToken()
         if(ch == '/')
         {
             while((ch = fgetc(fptr)) != '\n' && ch != EOF)  {}
-            //if(ch == '\n')
             return getNextToken();
         }
         //multi line comment
@@ -175,7 +178,9 @@ Token getNextToken()
         }
 
         if(next != EOF)
-            ungetc(next, fptr);
+        {
+           ungetc(next, fptr);
+        }
         strcpy(token.lexeme, "/");
         token.type = OPERATOR;
         return token;
@@ -190,6 +195,7 @@ Token getNextToken()
         {
             return token;
         }
+
         token.lexeme[i++] = ch;
 
         if(ch == '\\')
@@ -268,14 +274,9 @@ Token getNextToken()
                 ungetc(third, fptr);
             }
         }
-        else if((ch == '+' && (next == '+' || next == '=')) ||
-                (ch == '-' && (next == '-' || next == '=' || next == '>')) ||
-                (ch == '=' && next == '=') ||
-                (ch == '!' && next == '=') ||
-                (ch == '<' && next == '=') ||
-                (ch == '>' && next == '=') ||
-                (ch == '&' && (next == '&' || next == '=')) ||
-                (ch == '|' && (next == '|' || next == '=')) ||
+        else if((ch == '+' && (next == '+' || next == '=')) || (ch == '-' && (next == '-' || next == '=' || next == '>')) ||
+                (ch == '=' && next == '=') || (ch == '!' && next == '=') || (ch == '<' && next == '=') || (ch == '>' && next == '=') || 
+                (ch == '&' && (next == '&' || next == '=')) || (ch == '|' && (next == '|' || next == '=')) ||
                 ((ch == '*' || ch == '%' || ch == '^') && next == '='))
         {
             op[1] = next;
@@ -306,20 +307,32 @@ Token getNextToken()
     return token;
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 void categorizeToken(Token* token)
 {
     if(isKeyword(token -> lexeme))
+    {
         token -> type = KEYWORD;
+    }
     else if(isConstant(token -> lexeme) || isfloatConstant(token -> lexeme))
+    {
         token -> type = CONSTANT;
+    }
     else if(isIdentifier(token -> lexeme))
+    {
         token -> type = IDENTIFIER;
+    }
     else if(isOperator(token -> lexeme))
+    {
         token -> type = OPERATOR;
-    else 
+    }
+    else
+    { 
         token -> type = UNKNOWN;
+    }
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 int isKeyword(const char* str)
 {
     for(int i = 0; i < MAX_KEYWORDS; i++)
@@ -332,6 +345,7 @@ int isKeyword(const char* str)
     return 0;
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 int isOperator(const char* str)
 {
     if(strlen(str) != 1)
@@ -342,6 +356,7 @@ int isOperator(const char* str)
     return 0;
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 int isSpecialCharacter(char ch)
 {
     if(strchr(specialCharacters, ch) != NULL)
@@ -350,6 +365,7 @@ int isSpecialCharacter(char ch)
     return 0;
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 int isConstant(const char* str)
 {
     int i = 0;
@@ -422,6 +438,7 @@ int isConstant(const char* str)
     return 1;
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 int isIdentifier(const char* str)
 {
     int i = 0;
@@ -441,6 +458,7 @@ int isIdentifier(const char* str)
     return 1;
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
 int isfloatConstant(const char *str)
 {
     int i = 0, dot_count = 0, digit_count = 0;
